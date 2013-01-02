@@ -32,7 +32,16 @@
    <string>Roster</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QScrollBar::handle:vertical {
+    background-color: rgb(95, 126, 158);
+}
+
+QScrollBar:vertical {
+    width: 4px;
+	background-color: rgb(216, 222, 228);
+	border-radius: 2px;
+ }
+</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -74,12 +83,45 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <family>Tahoma</family>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">QListView {
 	border: none;
 	border-left: 1px solid rgb(218, 226, 232);
 	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:0.01, stop:0 rgba(216, 216, 216, 255), stop:1 rgba(247, 247, 247));
+	padding: 4px 0 4px 10px;
+}
+
+QListView::item {
+    background: none;
+	color: rgb(43, 88, 122);
+	height: 23px;
+	border: 1px solid transparent;
+	padding-left: 5px;
+	margin-right: 5px;
+}
+
+QListView::item:hover {
+	background-color: rgb(225, 231, 237);
+	padding-left: 5px;
+}
+
+QListView::item:selected:active {
+	background-color: rgb(94, 130, 168);
+	border: 1px solid rgb(81, 114, 149);
+	color: rgb(255, 255, 255);
+	padding-left: 5px;
 }</string>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
         </property>
        </widget>
       </item>

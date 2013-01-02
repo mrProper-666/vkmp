@@ -6,11 +6,13 @@
 #include <QShortcut>
 #include <QPropertyAnimation>
 #include <QtDebug>
+#include <QStringListModel>
 
 #include "playerwidget.h"
 #include "playlistmodel.h"
 #include "playlistitem.h"
 #include "playlistitemdelegate.h"
+#include "vk.h"
 
 typedef enum {
     opened,
@@ -39,6 +41,8 @@ private:
     QPropertyAnimation *plAnimation;
     QRect widgRect;
     PlaylistModel *plModel;
+    VK *cVk;
+    QStringListModel *albumsModel;
 
     void createInterface();
     void createPl();
@@ -46,6 +50,7 @@ private:
 private slots:
     void plActivityUp();
     void plActivityDown();
+    void albumsAdd(QHash<QString,albums>*);
 
 };
 

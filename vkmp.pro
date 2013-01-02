@@ -1,4 +1,4 @@
-QT       += core gui phonon network
+QT       += core gui phonon network xml webkit
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     playlistitemwidget.cpp \
     playlistmodel.cpp \
     playlistitemdelegate.cpp \
-    vk.cpp
+    vk.cpp \
+    settings.cpp
 
 HEADERS  += roster.h \
     playerwidget.h \
@@ -27,10 +28,14 @@ HEADERS  += roster.h \
     playlistitemwidget.h \
     playlistmodel.h \
     playlistitemdelegate.h \
-    vk.h
+    vk.h \
+    structs.h \
+    settings.h
 
 FORMS    += roster.ui \
     playerwidget.ui
 
 RESOURCES += \
     resources.qrc
+
+win32:RC_FILE = winRCFile.rc

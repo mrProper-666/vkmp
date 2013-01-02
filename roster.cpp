@@ -22,6 +22,11 @@ Roster::Roster(QWidget *parent) :
 
     plModel = new PlaylistModel;
     createPl();
+
+    cVk = new VK;
+    cVk->connectToVk();
+
+    connect(cVk, SIGNAL(albumsDone(QHash<QString,albums>*)), this, SLOT(albumsAdd(QHash<QString,albums>*)));
 }
 
 Roster::~Roster()
@@ -92,4 +97,14 @@ void Roster::createPl(){
     plModel->list = lst; // устанавливаем список элементов
     ui->plView->setModel(plModel); // устанавливаем модель
     ui->plView->setItemDelegate(new PlaylistItemDelegate); // устанавливаем делегат
+}
+
+void Roster::albumsAdd(QHash<QString,albums>* albumsHash){
+    QStringList strList;
+    foreach (QString key, albumsHash->keys()){
+        strList << albumsHash->value(key).title;
+    }
+    albumsModel = new QStringListModel();
+    albumsModel->setStringList(strList);
+    ui->albView->setModel(albumsModel);
 }

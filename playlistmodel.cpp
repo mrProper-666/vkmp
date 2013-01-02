@@ -17,9 +17,6 @@ QVariant PlaylistModel::data(const QModelIndex &index, int role) const
     if (index.row() >= list.size())
         return QVariant();
     if (role == Qt::DisplayRole){
-        /* Чтобы произвести преобразования QVariant::fromValue(list.at(index.row()))
-         * нужно было регистрировать наш тип макросом Q_DECLARE_METATYPE(MyItem *)
-         */
         return QVariant::fromValue(list.at(index.row()));
     }else{
         return QVariant();
