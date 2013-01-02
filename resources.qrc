@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/play.png</file>
+        <file>resources/play_hover.png</file>
+        <file>resources/next.png</file>
+        <file>resources/prev.png</file>
+        <file>resources/repeatBtn.png</file>
+        <file>resources/shuffleBtn.png</file>
+        <file>resources/statusBtn.png</file>
+    </qresource>
+</RCC>
