@@ -23,6 +23,7 @@ class VK : public QObject
 public:
     explicit VK(QObject *parent = 0);
     void authorize(const QString &l, const QString &p, const QString &remixsid);
+    QList<audio> albumById(QString id);
 
     QHash<QString, albums> albumsHash;
     QMultiHash<QString, audio> audioHash;
@@ -49,7 +50,7 @@ signals:
     void connected();
     void userDone(loginMVars *);
     void albumsDone(QHash<QString, albums> *);
-    void audioDone(QMultiHash<QString, audio>*);
+    void audioDone();
 
 public slots:
     void connectToVk();

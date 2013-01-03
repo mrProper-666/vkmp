@@ -29,3 +29,7 @@ Qt::ItemFlags PlaylistModel::flags(const QModelIndex &index) const
         return Qt::ItemIsEnabled;
     return QAbstractItemModel::flags(index) | Qt::ItemIsEnabled ;
 }
+
+void PlaylistModel::clear(){
+    list.clear();
+}

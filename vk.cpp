@@ -325,5 +325,13 @@ void VK::audioParse(QByteArray xml){
                 s_audio.album_id.clear();
             }
     }
-    emit audioDone(&audioHash);
+    emit audioDone();
+}
+
+QList<audio> VK::albumById(QString id){
+    if (id != 0) {
+        return audioHash.values(id);
+    } else {
+        return audioHash.values();
+    }
 }

@@ -7,6 +7,7 @@
 #include <QPropertyAnimation>
 #include <QtDebug>
 #include <QStringListModel>
+#include <QStandardItemModel>
 
 #include "playerwidget.h"
 #include "playlistmodel.h"
@@ -42,16 +43,20 @@ private:
     QRect widgRect;
     PlaylistModel *plModel;
     VK *cVk;
-    QStringListModel *albumsModel;
+    QStandardItemModel *albumsModel;
 
     void createInterface();
-    void createPl();
+    void createPl(QString id);
+    QString time(int time);
 
 private slots:
     void plActivityUp();
     void plActivityDown();
     void albumsAdd(QHash<QString,albums>*);
+    void addAll();
 
+    void on_albView_clicked(const QModelIndex &index);
+    void on_plView_doubleClicked(const QModelIndex &index);
 };
 
 #endif // ROSTER_H

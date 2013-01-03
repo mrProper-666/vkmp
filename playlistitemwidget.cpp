@@ -10,6 +10,8 @@ PlaylistItemWidget::PlaylistItemWidget(QWidget *parent) :
     QFont font;
     font.setBold(true);
     artist->setFont(font);
+    artist->setMaximumWidth(270);
+    song->setMaximumWidth(260);
     vertLay->addWidget(artist);
     vertLay->addWidget(song);
     vertLay->setContentsMargins(0,0,0,0);
