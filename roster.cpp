@@ -18,6 +18,10 @@ Roster::Roster(QWidget *parent) :
     plShortcutDown->setKey(QKeySequence(Qt::CTRL + Qt::Key_Down));
     connect(plShortcutDown, SIGNAL(activated()), this, SLOT(plActivityDown()));
 
+    save = new QShortcut(this);
+    save->setKey(QKeySequence(Qt::SHIFT + Qt::Key_Escape));
+    connect(save, SIGNAL(activated()), this, SLOT(saveFile()));
+
     plAnimation = new QPropertyAnimation(this, "geometry");
 
     plModel = new PlaylistModel;
@@ -28,6 +32,11 @@ Roster::Roster(QWidget *parent) :
 
     connect(cVk, SIGNAL(albumsDone(QHash<QString,albums>*)), this, SLOT(albumsAdd(QHash<QString,albums>*)));
     connect(cVk, SIGNAL(audioDone()), this, SLOT(addAll()));
+    connect(cPlayerWidget, SIGNAL(playNext()), this, SLOT(playNext()));
+    connect(cPlayerWidget, SIGNAL(playPrev()), this, SLOT(playPrev()));
+    connect(cPlayerWidget, SIGNAL(aboutToFinish()), this, SLOT(playNext()));
+
+    progDialog = new QProgressDialog(this);
 }
 
 Roster::~Roster()
@@ -73,28 +82,6 @@ void Roster::plActivityDown(){
 void Roster::createPl(QString id){
     plModel->clear();
     QList<PlaylistItem *> lst;
-
-//    PlaylistItem *item1 = new PlaylistItem;
-//    item1->artist = tr("Артист 1");
-//    item1->song = tr("Песня 1");
-//    item1->time = tr("3:43");
-//    PlaylistItem *item2 = new PlaylistItem;
-//    item2->artist = tr("Артист 2");
-//    item2->song = tr("Песня 2");
-//    item2->time = tr("13:03");
-//    PlaylistItem *item3 = new PlaylistItem;
-//    item3->artist = tr("Артист 3");
-//    item3->song = tr("Песня 3");
-//    item3->time = tr("2:16");
-//    PlaylistItem *item4 = new PlaylistItem;
-//    item4->artist = tr("Артист 4");
-//    item4->song = tr("Песня 4");
-//    item4->time = tr("4:21");
-
-//    lst.append(item1);
-//    lst.append(item2);
-//    lst.append(item3);
-//    lst.append(item4);
     QList<audio> audioList = cVk->albumById(id);
 
     foreach (audio s_audio, audioList) {
@@ -117,15 +104,6 @@ void Roster::createPl(QString id){
 }
 
 void Roster::albumsAdd(QHash<QString,albums>* albumsHash){
-//    QStringList strList;
-//    strList << tr("Все");
-//    foreach (QString key, albumsHash->keys()){
-//        strList << albumsHash->value(key).title;
-//    }
-//    albumsModel = new QStringListModel();
-//    albumsModel->setStringList(strList);
-//    ui->albView->setModel(albumsModel);
-
     albumsModel->clear();
     QStandardItem *item = new QStandardItem();
     item->setText(tr("Все"));
@@ -153,6 +131,81 @@ void Roster::on_albView_clicked(const QModelIndex &index)
 
 void Roster::on_plView_doubleClicked(const QModelIndex &index)
 {
+    play(index);
+}
+
+void Roster::play(const QModelIndex &index){
+    currentIndex = index;
     PlaylistItem *item = plModel->data(index, Qt::DisplayRole).value<PlaylistItem*>();
-    qDebug() << item->url;
+    cPlayerWidget->play(item);
+}
+
+void Roster::on_plView_clicked(const QModelIndex &index)
+{
+    cPlayerWidget->saveSelected(plModel->data(index, Qt::DisplayRole).value<PlaylistItem*>());
+}
+
+void Roster::playNext(){
+    QModelIndex index;
+    if (currentIndex.isValid()) {
+        index = plModel->index(currentIndex.row() + 1);
+        if (index.isValid())
+            play(index);
+    }
+}
+
+void Roster::playPrev(){
+    QModelIndex index;
+    if (currentIndex.isValid()) {
+        index = plModel->index(currentIndex.row() - 1);
+        if (index.isValid())
+            play(index);
+    }
+}
+
+void Roster::saveFile(){
+    QItemSelectionModel *selModel = ui->plView->selectionModel();
+    QModelIndex index = selModel->selectedIndexes().at(0);
+    PlaylistItem *item = plModel->data(index, Qt::DisplayRole).value<PlaylistItem*>();
+
+    QString name = QFileDialog::getSaveFileName(this,
+                                                tr("Сохранить песню"),
+                                                QDir::homePath() + "/" + QString(item->artist + " - " + item->song),
+                                                tr("Аудио (*.mp3)"));
+    if (name.isEmpty())
+        return;
+
+    file.setFileName(name);
+    if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::information(this, qApp->applicationName(),
+                                 tr("Ошибка сохранения файла %1: %2.")
+                                 .arg(name).arg(file.errorString()));
+        file.remove();
+        return;
+    }
+
+    QNetworkAccessManager manager;
+    QEventLoop loop;
+
+    QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(item->url)));
+    connect( reply, SIGNAL(finished()), &loop, SLOT(quit()) );
+    connect(reply,SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(progressDownSlot(qint64, qint64)));
+    progDialog->show();
+    progDialog->setLabelText(tr("Качаем..."));
+    loop.exec();
+    if (reply->error() == QNetworkReply::NoError){
+        file.write(reply->readAll());
+    }
+    file.close();
+}
+
+void Roster::progressDownSlot(qint64 readBytes, qint64 totalBytes){
+    progDialog->setMaximum(totalBytes);
+    progDialog->setValue(readBytes);
+    if (readBytes == totalBytes) {
+        QMessageBox::information(this,
+                                 qApp->applicationName(),
+                                 tr("Песня скачана"),
+                                 QMessageBox::Ok);
+    }
 }

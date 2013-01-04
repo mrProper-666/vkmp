@@ -147,7 +147,6 @@ void VK::getUserInfo(QString access_token, QString uid){
     params.append("access_token=" + access_token);
     paramsStr = params.join("&");
     paramsStr = server + paramsStr;
-    qDebug() << paramsStr;
     request.setUrl(paramsStr);
     http->get(request);
 }
@@ -160,7 +159,6 @@ void VK::getAlbums(QString access_token, QString uid){
     params.append("access_token=" + access_token);
     paramsStr = params.join("&");
     paramsStr = server + paramsStr;
-    qDebug() << paramsStr;
     request.setUrl(paramsStr);
     http->get(request);
 }
@@ -176,7 +174,6 @@ void VK::getAudio(QString access_token, QString uid){
     params.append("access_token="+access_token);
     paramsStr = params.join("&");
     paramsStr = server + paramsStr;
-    qDebug() << paramsStr;
     request.setUrl(paramsStr);
     http->get(request);
 }
