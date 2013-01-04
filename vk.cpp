@@ -36,6 +36,7 @@ void VK::authorize(const QString &l, const QString &p, const QString &remixsid){
 
     //создаем виджет браузера
     authView = new QWebView();
+    authView->setWindowModality(Qt::ApplicationModal);
     connect(authView->page(),SIGNAL(loadFinished(bool)),this,SLOT(slotAuthPageLoaded(bool)));
     authView->setWindowFlags(Qt::CustomizeWindowHint);
     authView->resize(600, 430);
