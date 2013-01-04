@@ -37,6 +37,8 @@ Roster::Roster(QWidget *parent) :
     connect(cPlayerWidget, SIGNAL(aboutToFinish()), this, SLOT(playNext()));
 
     progDialog = new QProgressDialog(this);
+    progDialog->setCancelButtonText(tr("Отменить"));
+    connect(progDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
 }
 
 Roster::~Roster()
@@ -185,7 +187,6 @@ void Roster::saveFile(){
     }
 
     QNetworkAccessManager manager;
-    QEventLoop loop;
 
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(item->url)));
     connect( reply, SIGNAL(finished()), &loop, SLOT(quit()) );
@@ -208,4 +209,11 @@ void Roster::progressDownSlot(qint64 readBytes, qint64 totalBytes){
                                  tr("Песня скачана"),
                                  QMessageBox::Ok);
     }
+}
+
+void Roster::cancelDownload(){
+    file.close();
+    file.remove();
+    loop.quit();
+    progDialog->hide();
 }

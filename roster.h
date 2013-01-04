@@ -53,6 +53,7 @@ private:
     QModelIndex currentIndex;
     QFile file;
     QProgressDialog *progDialog;
+    QEventLoop loop;
 
     void createInterface();
     void createPl(QString id);
@@ -68,6 +69,7 @@ private slots:
     void playPrev();
     void saveFile();
     void progressDownSlot(qint64, qint64);
+    void cancelDownload();
 
     void on_albView_clicked(const QModelIndex &index);
     void on_plView_doubleClicked(const QModelIndex &index);
